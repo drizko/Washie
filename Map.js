@@ -42,38 +42,25 @@ var styles = StyleSheet.create({
 		paddingTop: 40,
 		padding: 10
 	},
-    title: {
-  fontWeight: '500',
-},
-  button:{
+    button:{
       height: 50,
       backgroundColor: "#48bbEC",
       borderRadius: 5,
       alignSelf: "stretch",
       marginTop: 10,
       justifyContent: 'center'
-  },
-  buttonText: {
-      fontSize: 22,
-      color: "#FFF",
-      alignSelf: "center"
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  map: {
-    height: 250,
-    margin: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
-  },
+    },
+    buttonText: {
+        fontSize: 22,
+        color: "#FFF",
+        alignSelf: "center"
+    },
+    map: {
+        height: 250,
+        margin: 10,
+        borderWidth: 1,
+        borderColor: '#000000',
+    },
 });
 
 module.exports = Map;

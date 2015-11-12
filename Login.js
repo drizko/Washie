@@ -43,17 +43,17 @@ class Login extends Component {
 		return (
 				<View style={styles.container}>
 					<Text style={styles.heading}>
-						Github Browser
+						Washie
 					</Text>
 
 					<TextInput style={styles.input}
 						onChangeText={ (text) => this.setState( {userName: text} ) }
-						placeholder="Github Username" />
+						placeholder="E-Mail" />
 
 
 					<TextInput style={styles.input}
 						onChangeText={ (text) => this.setState( {password: text} ) }
-						placeholder="Github Password"
+						placeholder="Password"
 						secureTextEntry={true}/>
 
 					<TouchableHighlight
@@ -72,10 +72,7 @@ class Login extends Component {
 					<ActivityIndicatorIOS
 						animating={this.state.showProgress}
 						size="large"
-						style={styles.loader}
-						/>
-
-
+						style={styles.loader}/>
 				</View>
 			);
 	}
@@ -100,10 +97,6 @@ var styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10
 	},
-	logo: {
-		width: 66,
-		height: 55
-	},
 	heading: {
 		fontSize: 30,
 		marginTop: 10
@@ -114,11 +107,13 @@ var styles = StyleSheet.create({
 		padding: 4,
 		fontSize: 18,
 		borderWidth: 1,
+        borderRadius: 5,
 		borderColor: "#48bbEC"
 	},
 	button:{
 		height: 50,
 		backgroundColor: "#48bbEC",
+        borderRadius: 5,
 		alignSelf: "stretch",
 		marginTop: 10,
 		justifyContent: 'center'
@@ -128,29 +123,13 @@ var styles = StyleSheet.create({
 		color: "#FFF",
 		alignSelf: "center"
 	},
-
 	loader: {
 		marginTop: 20
 	},
-
 	error: {
 		color: 'red',
 		paddingTop: 10
 	}
 })
-
-// var GithubBrowser = React.createClass({
-// 	var messsage = "hello there";
-// 	render: function(){
-// 		<Text>Hello From Login.js</Text>
-// 	}
-// })
-
-// var styles = StyleSheet.create({
-// 	container: {
-// 		backgroundColor : '#F5FCFF',
-// 		flex : 1
-// 	}
-// })
 
 module.exports = Login;

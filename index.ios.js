@@ -11,10 +11,6 @@ var Login = require('./Login')
 
 var {
   AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  TouchableHighlight
 } = React;
 
 var Washie = React.createClass({
@@ -50,47 +46,6 @@ var Washie = React.createClass({
           );
         }
     }
-});
-
-var styles = StyleSheet.create({
-    container: {
-		backgroundColor: '#F5FCFF',
-		flex: 1,
-		paddingTop: 40,
-		padding: 10
-	},
-    title: {
-  fontWeight: '500',
-},
-  button:{
-      height: 50,
-      backgroundColor: "#48bbEC",
-      borderRadius: 5,
-      alignSelf: "stretch",
-      marginTop: 10,
-      justifyContent: 'center'
-  },
-  buttonText: {
-      fontSize: 22,
-      color: "#FFF",
-      alignSelf: "center"
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  map: {
-    height: 250,
-    margin: 10,
-    borderWidth: 1,
-    borderColor: '#000000',
-  },
 });
 
 AppRegistry.registerComponent('Washie', () => Washie);

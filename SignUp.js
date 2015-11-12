@@ -74,10 +74,6 @@ var styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10
 	},
-	logo: {
-		width: 16,
-		height: 16
-	},
 	heading: {
 		fontSize: 30,
 		marginTop: 10
@@ -91,24 +87,6 @@ var styles = StyleSheet.create({
         borderRadius: 5,
 		borderColor: "#48bbEC"
 	},
-    verified:{
-		height: 50,
-		marginTop: 10,
-		padding: 4,
-		fontSize: 18,
-		borderWidth: 1,
-        borderRadius: 5,
-		borderColor: "#66FF33"
-	},
-    wrong:{
-        height: 50,
-        marginTop: 10,
-        padding: 4,
-        fontSize: 18,
-        borderWidth: 1,
-        borderRadius: 5,
-        borderColor: "#CC0000"
-    },
 	button:{
 		height: 50,
 		backgroundColor: "#48bbEC",
@@ -122,15 +100,6 @@ var styles = StyleSheet.create({
 		color: "#FFF",
 		alignSelf: "center"
 	},
-
-	loader: {
-		marginTop: 20
-	},
-
-	error: {
-		color: 'red',
-		paddingTop: 10
-	}
 })
 
 module.exports = SignUp;
