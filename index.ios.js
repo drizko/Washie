@@ -6,29 +6,26 @@
 
 var React = require('react-native');
 var SignUp = require('./SignUp')
-var Map = require('./Map')
 var Login = require('./Login')
 
 var {
-  AppRegistry,
+  AppRegistry
 } = React;
 
 var Washie = React.createClass({
     getInitialState: function(){
         return {
             isLoggedIn: false,
-            isSignUp: false
+            isSignUp: false,
         }
     },
 
-    onLogin: function(){
-        this.setState({isLoggedIn: true})
-        this.setState({showProgress: false})
+    onSignUp: function(){
+        this.setState({ isSignUp: true })
     },
 
-    onSignUp: function(){
-        this.setState({isSignUp: true})
-        this.setState({showProgress: false})
+    onRegister: function(){
+        this.setState({ isLoggedIn: true })
     },
 
     render: function() {
@@ -38,7 +35,7 @@ var Washie = React.createClass({
             )
         } else if (this.state.isSignUp){
             return (
-              <SignUp onLogin={this.onLogin}/>
+              <SignUp onRegister={this.onRegister}/>
             );
         } else {
           return (

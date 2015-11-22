@@ -41,6 +41,10 @@ class SignUp extends Component {
                     onChangeText={ (text) => this.setState( {email: text} ) }
                     placeholder="E-Mail" />
                 <TextInput style={styles.input}
+                    autoCapitalize="none"
+                    onChangeText={ (text) => this.setState( {mobile: text} ) }
+                    placeholder="Mobile Number" />
+                <TextInput style={styles.input}
                     onChangeText={ (text) => this.setState({password: text}) }
                     placeholder="Password"
                     secureTextEntry={true}/>
@@ -62,9 +66,32 @@ class SignUp extends Component {
     }
     onRegisterPressed(){
         this.setState({showProgress: true});
-        this.props.onLogin();
+
+        fetch('http://localhost:8080/api/users',  {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstName   : this.state.firstName,
+                lastName    : this.state.lastName,
+                email       : this.state.email,
+                password    : this.state.password,
+                mobile      : this.state.mobile
+            })
+        }).
+        then( response => {
+            this.props.onRegister();
+        }).
+        catch( err => {
+            console.log("err");
+            console.log(err);
+        })
     }
 };
+
+
 
 var styles = StyleSheet.create({
 	container: {

@@ -2,7 +2,7 @@
 
 var React = require('react-native');
 var buffer = require('buffer');
-var authService = require('./AuthService');
+var Map = require('./Map')
 
 var {
   AppRegistry,
@@ -13,16 +13,19 @@ var {
   TextInput,
   TouchableHighlight,
   Component,
+  Activity,
   ActivityIndicatorIOS
 } = React;
-
 
 class Login extends Component {
 	constructor(props){
 		super(props);
 
 		this.state = {
-			showProgress: false
+            success: false,
+            badCredentials: false,
+            loggedIn: true,
+            showProgress: false
 		}
 	}
 
@@ -35,56 +38,88 @@ class Login extends Component {
             </Text>
 		}
 
-		if(!this.state.success && this.state.unknownError){
-			errorCtrl = <Text style={styles.error}>
-							Unknown Error
-					</Text>
-		}
+        if(this.state.loggedIn){
+            return (
+                <Map />
+            )
+        }
 		return (
-				<View style={styles.container}>
-					<Text style={styles.heading}>
-						Washie
-					</Text>
+			<View style={styles.container}>
+				<Text style={styles.heading}>
+					Washie
+				</Text>
 
-					<TextInput style={styles.input}
-						onChangeText={ (text) => this.setState( {userName: text} ) }
-						placeholder="E-Mail" />
+				<TextInput style={styles.input}
+					onChangeText={ (text) => this.setState( {email: text} ) }
+					placeholder="E-Mail" />
 
 
-					<TextInput style={styles.input}
-						onChangeText={ (text) => this.setState( {password: text} ) }
-						placeholder="Password"
-						secureTextEntry={true}/>
+				<TextInput style={styles.input}
+					onChangeText={ (text) => this.setState( {password: text} ) }
+					placeholder="Password"
+					secureTextEntry={true}/>
 
-					<TouchableHighlight
-						onPress={this.onLoginPressed.bind(this)}
-						style={styles.button}>
-						<Text style={styles.buttonText}>Log In</Text>
-					</TouchableHighlight>
-                    <TouchableHighlight
-						onPress={this.onSignUpPressed.bind(this)}
-						style={styles.button}>
-						<Text style={styles.buttonText}>Sign Up</Text>
-					</TouchableHighlight>
+				<TouchableHighlight
+					onPress={this.onLoginPressed.bind(this)}
+					style={styles.button}>
+					<Text style={styles.buttonText}>Log In</Text>
+				</TouchableHighlight>
+                <TouchableHighlight
+					onPress={this.onSignUpPressed.bind(this)}
+					style={styles.button}>
+					<Text style={styles.buttonText}>Sign Up</Text>
+				</TouchableHighlight>
 
-					{errorCtrl}
+				{errorCtrl}
 
-					<ActivityIndicatorIOS
-						animating={this.state.showProgress}
-						size="large"
-						style={styles.loader}/>
-				</View>
-			);
+                <ActivityIndicatorIOS
+                    animating={this.state.showProgress}
+                    size="large"
+                    style={styles.loader}
+                    />
+
+			</View>
+        );
 	}
 
 	onLoginPressed() {
-		console.log("Attempting to login with "+ this.state.userName);
-		this.setState({showProgress: true});
-        this.props.onLogin();
+        this.setState({ showProgress: true })
+        fetch('http://localhost:8080/api/login',  {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email       : this.state.email,
+                password    : this.state.password
+            })
+        }).
+        then( response => {
+
+            console.log(response);
+
+            if (response.status === 200) {
+                this.setState({
+                    success: true,
+                    badCredentials: false,
+                    loggedIn: true,
+                    showProgress: false
+                })
+            } else {
+                this.setState({
+                    success: false,
+                    badCredentials: true,
+                    showProgress: false
+                })
+            }
+        }).
+        catch( err => {
+            console.log("err");
+            console.log(err);
+        })
 	}
     onSignUpPressed() {
-        console.log(this);
-        this.setState({showProgress: true});
         this.props.onSignUp();
     }
 };
