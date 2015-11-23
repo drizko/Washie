@@ -14,7 +14,8 @@ var {
   TouchableHighlight,
   Component,
   Activity,
-  ActivityIndicatorIOS
+  ActivityIndicatorIOS,
+  AsyncStorage
 } = React;
 
 class Login extends Component {
@@ -97,9 +98,8 @@ class Login extends Component {
         }).
         then( response => {
 
-            console.log(response);
-
             if (response.status === 200) {
+                AsyncStorage.setItem('creds', this.state.email)
                 this.setState({
                     success: true,
                     badCredentials: false,

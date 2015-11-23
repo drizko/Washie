@@ -29,18 +29,14 @@ var Washie = React.createClass({
     },
 
     render: function() {
-        if (this.state.isLoggedIn) {
-          return (
-              <Map />
-            )
-        } else if (this.state.isSignUp){
+        if (this.state.isSignUp){
             return (
-              <SignUp onRegister={this.onRegister}/>
+                <SignUp onRegister={this.onRegister}/>
             );
         } else {
-          return (
-            <Login onLogin={this.onLogin} onSignUp={this.onSignUp}/>
-          );
+            return (
+                <Login onLogin={this.onLogin} onSignUp={this.onSignUp}/>
+            );
         }
     }
 });

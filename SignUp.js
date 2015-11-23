@@ -1,6 +1,5 @@
 'use strict';
 
-
 var React = require('react-native');
 
 var {
@@ -64,30 +63,10 @@ class SignUp extends Component {
             </View>
         )
     }
-    onRegisterPressed(){
-        this.setState({showProgress: true});
 
-        fetch('http://localhost:8080/api/users',  {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                firstName   : this.state.firstName,
-                lastName    : this.state.lastName,
-                email       : this.state.email,
-                password    : this.state.password,
-                mobile      : this.state.mobile
-            })
-        }).
-        then( response => {
-            this.props.onRegister();
-        }).
-        catch( err => {
-            console.log("err");
-            console.log(err);
-        })
+    // Need to fill this in for Register button
+    onRegisterPressed(){
+
     }
 };
 
