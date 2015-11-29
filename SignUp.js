@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+var Map = require('./Map')
 
 var {
   AppRegistry,
@@ -24,11 +25,21 @@ class SignUp extends Component {
             mobileValid: true,
             passValid: true,
             confirmValid: true,
+            success: false,
+            badCredentials: false,
+            loggedIn: false,
+            showProgress: false
 		}
 	}
 
 	render() {
         var errorCtrl = <View />;
+
+        if(this.state.loggedIn){
+            return (
+                <Map />
+            )
+        }
 
         if(!this.state.emailValid){
 			errorCtrl = <Text style={styles.error}>
@@ -54,6 +65,12 @@ class SignUp extends Component {
             </Text>
         }
 
+        if(this.state.loggedIn){
+            return (
+                <Map />
+            )
+        }
+
         return(
             <View style={styles.container}>
                 <Text style={styles.heading}>
@@ -62,26 +79,26 @@ class SignUp extends Component {
 
                 <TextInput style={styles.input}
                     autoCapitalize='words'
-                    onChangeText={ (text) => AsyncStorage.setItem('firstName', text) }
+                    onChangeText={ (text) => this.setState({'firstName': text}) }
                     placeholder="Firstname" />
                 <TextInput style={styles.input}
                     autoCapitalize='words'
-                    onChangeText={ (text) => AsyncStorage.setItem('lastName', text) }
+                    onChangeText={ (text) => this.setState({'lastName': text}) }
                     placeholder="Lastname" />
                 <TextInput style={styles.input}
                     autoCapitalize="none"
-                    onChangeText={ (text) => AsyncStorage.setItem('email', text) }
+                    onChangeText={ (text) => this.setState({'email': text}) }
                     placeholder="E-Mail" />
                 <TextInput style={styles.input}
                     keyboardType='numeric'
-                    onChangeText={ (text) => AsyncStorage.setItem('mobile', text) }
+                    onChangeText={ (text) => this.setState({'mobile': text}) }
                     placeholder="Mobile Number" />
                 <TextInput style={styles.input}
-                    onChangeText={ (text) => AsyncStorage.setItem('password', text) }
+                    onChangeText={ (text) => this.setState({'password': text}) }
                     placeholder="Password"
                     secureTextEntry={true}/>
                 <TextInput style={styles.input}
-                    onChangeText={ (text) => AsyncStorage.setItem('confirmPass', text) }
+                    onChangeText={ (text) => this.setState({'confirmPass': text}) }
                     placeholder="Confirm Password"
                     secureTextEntry={true} />
                 <TouchableHighlight
@@ -96,77 +113,79 @@ class SignUp extends Component {
 
     // Need to fill this in for Register button
     onRegisterPressed(){
-        var valueObj = {};
-        AsyncStorage.getItem('firstName')
-        .then( value => {
-            valueObj.firstName = value;
-            return AsyncStorage.getItem('lastName')
-        })
-        .then( value => {
-            valueObj.lastName = value;
-            this.setState({emailValid: true})
-            return AsyncStorage.getItem('email')
-        })
-        .then( value => {
+
+        this.setState({ showProgress: true }, () => {
             var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            if(!re.test(value)){
+            if(!re.test(this.state.email)){
                 this.setState({emailValid: false})
                 this.setState({mobileValid: true})
-                throw "e-mail must be valid"
+                return "EMail address must be valid"
+            } else {
+                this.setState({emailValid: true})
             }
-            this.setState({emailValid: true})
-            valueObj.email = value;
-            return AsyncStorage.getItem('mobile')
-        })
-        .then( value => {
+
             var re = /^\d{10}$/;
-            if(!re.test(value)){
+            if(!re.test(this.state.mobile)){
                 this.setState({mobileValid: false})
-                throw "Mobile number must be 10 digits"
+                return "Mobile number must be 10 digits"
+            } else {
+                this.setState({'mobileValid': true})
             }
-            this.setState({mobileValid: true})
-            valueObj.mobile = value;
-            return AsyncStorage.getItem('password')
-        })
-        .then( value => {
+
             var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
-            if(!re.test(value)){
+            if(!re.test(this.state.password)){
                 this.setState({passValid: false})
-                this.setItem({confirmValid: true})
-                throw "Password must be at 8-20 characters long with at least 1 numberic digit and one captial letter"
+                this.setState({confirmValid: true})
+                return "Password must be at 8-20 characters long with at least 1 numberic digit and one captial letter"
+            } else {
+                this.setState({'passValid': true})
             }
-            this.setState({passValid: true})
-            valueObj.password = value;
-            return AsyncStorage.getItem('confirmPass')
-        })
-        .then( value => {
-            if(value !== valueObj.password){
+
+            if(this.state.password !== this.state.confirmPass){
                 this.setState({'confirmValid': false})
                 this.setState({'passValid': true})
-                throw "Passwords must match"
+                return "Passwords must match"
+            } else {
+                this.setState({'confirmValid': true})
             }
-            this.setState({'confirmValid': true})
-            return fetch('http://localhost:8080/api/users/', {
+
+            return fetch('http://localhost:8080/api/users',  {
                 method: 'post',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    firstName   : valueObj.firstName,
-                    lastName    : valueObj.lastName,
-                    email       : valueObj.email,
-                    mobile      : valueObj.mobile,
-                    password    : valueObj.password
+                    firstName   : this.state.firstName,
+                    lastName    : this.state.lastName,
+                    email       : this.state.email,
+                    mobile      : this.state.mobile,
+                    password    : this.state.password
                 })
+            }).
+            then( response => {
+                if (response.status === 200) {
+                    AsyncStorage.setItem('creds', this.state.email)
+                    this.setState({
+                        success: true,
+                        badCredentials: false,
+                        loggedIn: true,
+                        showProgress: false
+                    })
+                } else {
+                    this.setState({
+                        success: false,
+                        badCredentials: true,
+                        showProgress: false
+                    })
+                    throw "Something went bad"
+                }
+            }).
+            catch( err => {
+                console.log("err");
+                console.log(err);
             })
         })
-        .then( response => {
-            console.log(response)
-        })
-        .catch( err => {
-            console.log(err);
-        });
     }
 };
 
