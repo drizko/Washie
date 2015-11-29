@@ -25,7 +25,7 @@ class Login extends Component {
 		this.state = {
             success: false,
             badCredentials: false,
-            loggedIn: true,
+            loggedIn: false,
             showProgress: false
 		}
 	}

@@ -23,15 +23,14 @@ var WashSelector = React.createClass({
     return {
       values: ['Basic', 'Extra', 'Detail'],
       value: 'Not selected',
-      initialPosition: 'unknown',
-      lastPosition: 'unknown'
     };
   },
 
   render() {
     return (
-        <View style={styles.selector}>
+        <View>
             <SegmentedControlIOS
+                style={styles.selector}
                 values={this.state.values}
                 onValueChange={this._onValueChange} />
         </View>
@@ -39,18 +38,6 @@ var WashSelector = React.createClass({
   },
 
   _onValueChange(value) {
-      navigator.geolocation.getCurrentPosition(
-          (initialPosition) => this.setState({initialPosition}),
-          (error) => alert(error.message),
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
-      );
-      navigator.geolocation.watchPosition((lastPosition) => {
-          console.log(this.state.lastPosition);
-          this.setState({lastPosition});
-          console.log("this.state");
-          console.log(this.state.lastPosition.coords.longitude);
-      });
-
       AsyncStorage.setItem('wash_level', value)
       this.setState({
           value: value,
@@ -68,8 +55,9 @@ var VehicleSelector = React.createClass({
 
   render() {
     return (
-        <View style={styles.selector}>
+        <View>
             <SegmentedControlIOS
+                style={styles.selector}
                 values={this.state.values}
                 onValueChange={this._onValueChange} />
         </View>
@@ -88,9 +76,23 @@ class Map extends Component {
 	constructor(props){
 		super(props);
 
-		this.state = {
+        navigator.geolocation.getCurrentPosition(
+            (initialPosition) => this.setState({initialPosition}),
+            (error) => alert(error.message),
+            {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+        );
+        navigator.geolocation.watchPosition((lastPosition) => {
+            this.setState({lastPosition});
+            AsyncStorage.setItem('longitude', this.state.lastPosition.coords.longitude.toString());
+            AsyncStorage.setItem('latitude', this.state.lastPosition.coords.latitude.toString());
+        });
+
+        this.state = {
+            initialPosition: 'unknown',
+            lastPosition: 'unknown',
 		}
 	}
+
     render() {
         return (
             <View style={styles.container}>
@@ -104,8 +106,15 @@ class Map extends Component {
             </View>
         );
     }
+
     onRequestPressed() {
-        var valueObj = {}
+
+        var valueObj = {};
+        var locationObj = {};
+
+        var googleAPI = 'https://maps.googleapis.com/maps/api/geocode/json'
+
+
 
         AsyncStorage.getItem('wash_level')
         .then( value => {
@@ -141,48 +150,6 @@ class Map extends Component {
             })
 
         console.log(valueObj);
-        // store.get('creds').then((creds) => {
-        //     return fetch('http://localhost:8080/api/jobs',  {
-        //         method: 'post',
-        //         headers: {
-        //             'Accept': 'application/json',
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({
-        //             user_email      : creds.user_email,
-        //             status          : "open",
-        //             vehicle_type    : "car",
-        //             location        : "10020 W Meritage Ct. Sun Valley, CA 91352",
-        //             zip_code        : "91352",
-        //             wash_level      : "basic",
-        //             price           : "$25"
-        //         })
-        //     })
-        // })
-        // .then( response => {
-        //
-        //     console.log(response);
-        //
-        //     if (response.status === 200) {
-        //         this.setState({
-        //             success: true,
-        //             badCredentials: false,
-        //             loggedIn: true,
-        //             showProgress: false
-        //         })
-        //     } else {
-        //         this.setState({
-        //             success: false,
-        //             badCredentials: true,
-        //             showProgress: false
-        //         })
-        //     }
-        // })
-        // .catch( err => {
-        //     console.log("err");
-        //     console.log(err);
-        // })
-
         this.setState({ showProgress: true })
 	}
 }
@@ -202,9 +169,6 @@ var styles = StyleSheet.create({
       justifyContent: 'center'
     },
     selector: {
-      fontSize: 24,
-      textAlign: 'center',
-      fontWeight: '500',
       marginTop: 10,
       marginLeft: 10,
       marginRight: 10,
